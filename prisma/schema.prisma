@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id          String    @id @default(uuid())
+  email       String    @db.VarChar()
+  password    String    @db.VarChar()
+  phoneNumber String    @map("phone_num") @db.VarChar()
+  nickname    String    @db.VarChar()
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamp(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamp(3)
+  board       Board[]
+  comment     Comment[]
+}
+
+model Board {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar()
+  content   String    @db.Text
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(3)
+  Member    Member?   @relation(fields: [memberId], references: [id])
+  memberId  String?
+  comment   Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  desc      String    @db.Text
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(3)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(3)
+  Member    Member?   @relation(fields: [memberId], references: [id])
+  memberId  String?
+  Board     Board?    @relation(fields: [boardId], references: [id])
+  boardId   Int?
+}
