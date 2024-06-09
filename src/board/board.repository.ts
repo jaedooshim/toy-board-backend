@@ -27,9 +27,17 @@ export class BoardRepository {
     return await this.boardRepository.update({ where: { id }, data: updateData });
   }
 
+  async softDelete(id: number): Promise<Board> {
+    return await this.boardRepository.softDelete({ id });
+  }
+
   async findUniqueOrThrow(id: number) {
     const board = await this.boardRepository.findFirst({ where: { id } });
     if (!board) throw new NotFoundException('해당하는 게시글이 존재하지 않습니다.');
     return board;
+  }
+
+  async findMany(): Promise<Board[]> {
+    return await this.boardRepository.findMany();
   }
 }
